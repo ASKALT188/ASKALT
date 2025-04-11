@@ -54,10 +54,26 @@
       margin-top: 10px;
       text-align: center;
     }
+    .admin-login-btn {
+      margin-top: 20px;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table th,
+    table td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- Main Login Page -->
+  <div class="container" id="loginContainer">
     <img src="https://via.placeholder.com/50x50?text=Snapchat+Logo" alt="Snapchat Logo" style="display: block; margin: 0 auto;">
     <h2>Log In</h2>
     <p>To continue to Ads Manager</p>
@@ -71,7 +87,9 @@
       <button type="submit">Log In</button>
     </form>
     <a href="#" onclick="showSignUp()">Sign Up</a>
-    <a href="#" onclick="showAdminDashboard()">Admin Dashboard</a>
+    <div class="admin-login-btn">
+      <button onclick="showAdminLogin()">Admin Login</button>
+    </div>
   </div>
 
   <!-- Sign Up Form -->
@@ -89,12 +107,26 @@
       <label for="password">Password</label>
       <input type="password" id="password" name="password" placeholder="Enter Password">
 
-      <label for="confirmPassword">Confirm Password</label>
-      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
-
       <button type="submit">Sign Up</button>
     </form>
     <a href="#" onclick="hideSignUp()">Back to Login</a>
+  </div>
+
+  <!-- Admin Login Page -->
+  <div class="container" id="adminLoginContainer" style="display: none;">
+    <img src="https://via.placeholder.com/50x50?text=Snapchat+Logo" alt="Snapchat Logo" style="display: block; margin: 0 auto;">
+    <h2>Admin Login</h2>
+    <p>Access the admin dashboard</p>
+    <form id="adminLoginForm">
+      <label for="adminUsername">Username</label>
+      <input type="text" id="adminUsername" name="adminUsername" placeholder="Enter Username">
+
+      <label for="adminPassword">Password</label>
+      <input type="password" id="adminPassword" name="adminPassword" placeholder="Enter Password">
+
+      <button type="submit">Log In as Admin</button>
+    </form>
+    <a href="#" onclick="hideAdminLogin()">Back to Login</a>
   </div>
 
   <!-- Admin Dashboard -->
@@ -105,8 +137,7 @@
         <tr>
           <th>Name</th>
           <th>Email</th>
-          <th>Role</th>
-          <th>Action</th>
+          <th>Password</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -121,33 +152,41 @@
     // Show Sign Up Form
     function showSignUp() {
       document.getElementById("signUpContainer").style.display = "block";
-      document.getElementById("loginForm").style.display = "none";
+      document.getElementById("loginContainer").style.display = "none";
     }
 
     // Hide Sign Up Form
     function hideSignUp() {
       document.getElementById("signUpContainer").style.display = "none";
-      document.getElementById("loginForm").style.display = "block";
+      document.getElementById("loginContainer").style.display = "block";
+    }
+
+    // Show Admin Login Page
+    function showAdminLogin() {
+      document.getElementById("adminLoginContainer").style.display = "block";
+      document.getElementById("loginContainer").style.display = "none";
+    }
+
+    // Hide Admin Login Page
+    function hideAdminLogin() {
+      document.getElementById("adminLoginContainer").style.display = "none";
+      document.getElementById("loginContainer").style.display = "block";
     }
 
     // Show Admin Dashboard
     function showAdminDashboard() {
       document.getElementById("adminDashboard").style.display = "block";
-      document.getElementById("loginForm").style.display = "none";
+      document.getElementById("adminLoginContainer").style.display = "none";
 
       // Display Users in Table
       const tableBody = document.querySelector("#usersTable tbody");
       tableBody.innerHTML = "";
-      users.forEach((user, index) => {
+      users.forEach((user) => {
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${user.fullName}</td>
           <td>${user.email}</td>
-          <td>${user.role}</td>
-          <td>
-            <button onclick="editUser(${index})">Edit</button>
-            <button onclick="deleteUser(${index})">Delete</button>
-          </td>
+          <td>${user.password}</td>
         `;
         tableBody.appendChild(row);
       });
@@ -156,36 +195,10 @@
     // Hide Admin Dashboard
     function hideAdminDashboard() {
       document.getElementById("adminDashboard").style.display = "none";
-      document.getElementById("loginForm").style.display = "block";
+      document.getElementById("loginContainer").style.display = "block";
     }
 
-    // Handle Sign Up Form Submission
-    document.getElementById("signUpForm").addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      const fullName = document.getElementById("fullName").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
-
-      if (password !== confirmPassword) {
-        alert("Passwords do not match!");
-        return;
-      }
-
-      // Add User to Temporary Database
-      users.push({
-        fullName,
-        email,
-        password,
-        role: "User",
-      });
-
-      alert("Account created successfully!");
-      hideSignUp();
-    });
-
-    // Handle Login Form Submission
+    // Handle Normal Login Form Submission
     document.getElementById("loginForm").addEventListener("submit", (event) => {
       event.preventDefault();
 
@@ -198,30 +211,46 @@
       );
 
       if (user) {
-        alert("Login successful!");
-        if (user.role === "Admin") {
-          showAdminDashboard();
-        } else {
-          alert("You are logged in as a regular user.");
-        }
+        alert(`Welcome back, ${user.fullName}!`);
       } else {
         alert("Invalid credentials!");
       }
     });
 
-    // Edit User Function
-    function editUser(index) {
-      const user = users[index];
-      alert(`Editing user: ${user.fullName}`);
-      // Add logic to edit user here
-    }
+    // Handle Sign Up Form Submission
+    document.getElementById("signUpForm").addEventListener("submit", (event) => {
+      event.preventDefault();
 
-    // Delete User Function
-    function deleteUser(index) {
-      users.splice(index, 1);
-      alert("User deleted successfully!");
-      showAdminDashboard();
-    }
+      const fullName = document.getElementById("fullName").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      // Add User to Temporary Database
+      users.push({
+        fullName,
+        email,
+        password,
+      });
+
+      alert("Account created successfully!");
+      hideSignUp();
+    });
+
+    // Handle Admin Login Form Submission
+    document.getElementById("adminLoginForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const adminUsername = document.getElementById("adminUsername").value;
+      const adminPassword = document.getElementById("adminPassword").value;
+
+      // Check Admin Credentials
+      if (adminUsername === "ADMIN" && adminPassword === "123") {
+        alert("Admin login successful!");
+        showAdminDashboard();
+      } else {
+        alert("Invalid admin credentials!");
+      }
+    });
   </script>
 </body>
 </html>
