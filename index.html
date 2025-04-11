@@ -1,219 +1,227 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>لعبة سيارات - عالم مفتوح</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snapchat Ads Manager</title>
   <style>
-    /* تصميم الصفحة */
     body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
       margin: 0;
-      overflow: hidden;
-      background-color: #333;
+      padding: 0;
     }
-    canvas {
-      background-color: #7ec850; /* لون العشب */
+    .container {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      margin-top: 20px;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ffdc00;
+      color: #333;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e6c900;
+    }
+    a {
+      text-decoration: none;
+      color: #ffdc00;
       display: block;
-      margin: 0 auto;
+      margin-top: 10px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <canvas id="gameCanvas"></canvas>
+  <div class="container">
+    <img src="https://via.placeholder.com/50x50?text=Snapchat+Logo" alt="Snapchat Logo" style="display: block; margin: 0 auto;">
+    <h2>Log In</h2>
+    <p>To continue to Ads Manager</p>
+    <form id="loginForm">
+      <label for="username">Username or Email</label>
+      <input type="text" id="username" name="username" placeholder="Enter Username or Email">
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter Password">
+
+      <button type="submit">Log In</button>
+    </form>
+    <a href="#" onclick="showSignUp()">Sign Up</a>
+    <a href="#" onclick="showAdminDashboard()">Admin Dashboard</a>
+  </div>
+
+  <!-- Sign Up Form -->
+  <div class="container" id="signUpContainer" style="display: none;">
+    <img src="https://via.placeholder.com/50x50?text=Snapchat+Logo" alt="Snapchat Logo" style="display: block; margin: 0 auto;">
+    <h2>Sign Up</h2>
+    <p>Create a new account</p>
+    <form id="signUpForm">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" name="fullName" placeholder="Enter Full Name">
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Enter Email">
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter Password">
+
+      <label for="confirmPassword">Confirm Password</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
+
+      <button type="submit">Sign Up</button>
+    </form>
+    <a href="#" onclick="hideSignUp()">Back to Login</a>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div class="container" id="adminDashboard" style="display: none;">
+    <h2>Admin Dashboard</h2>
+    <table id="usersTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <a href="#" onclick="hideAdminDashboard()">Back to Login</a>
+  </div>
 
   <script>
-    // إعدادات الكانفس
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Temporary Database
+    const users = [];
 
-    // إعدادات العالم
-    const worldWidth = 2000;
-    const worldHeight = 2000;
-
-    // إعدادات الكائنات في العالم
-    const trees = [];
-    const houses = [];
-    const numTrees = 50;
-    const numHouses = 20;
-
-    // دالة عشوائية لموقع الكائنات
-    function randomRange(min, max) {
-      return Math.random() * (max - min) + min;
+    // Show Sign Up Form
+    function showSignUp() {
+      document.getElementById("signUpContainer").style.display = "block";
+      document.getElementById("loginForm").style.display = "none";
     }
 
-    // توليد الأشجار بمواقع عشوائية
-    for (let i = 0; i < numTrees; i++) {
-      trees.push({
-        x: randomRange(50, worldWidth - 50),
-        y: randomRange(50, worldHeight - 50),
-        size: randomRange(20, 30)
+    // Hide Sign Up Form
+    function hideSignUp() {
+      document.getElementById("signUpContainer").style.display = "none";
+      document.getElementById("loginForm").style.display = "block";
+    }
+
+    // Show Admin Dashboard
+    function showAdminDashboard() {
+      document.getElementById("adminDashboard").style.display = "block";
+      document.getElementById("loginForm").style.display = "none";
+
+      // Display Users in Table
+      const tableBody = document.querySelector("#usersTable tbody");
+      tableBody.innerHTML = "";
+      users.forEach((user, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${user.fullName}</td>
+          <td>${user.email}</td>
+          <td>${user.role}</td>
+          <td>
+            <button onclick="editUser(${index})">Edit</button>
+            <button onclick="deleteUser(${index})">Delete</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
       });
     }
 
-    // توليد البيوت بمواقع عشوائية
-    for (let i = 0; i < numHouses; i++) {
-      houses.push({
-        x: randomRange(100, worldWidth - 150),
-        y: randomRange(100, worldHeight - 150),
-        width: 80,
-        height: 60,
-        color: "#" + Math.floor(randomRange(0x444444, 0xeeeeee)).toString(16)
+    // Hide Admin Dashboard
+    function hideAdminDashboard() {
+      document.getElementById("adminDashboard").style.display = "none";
+      document.getElementById("loginForm").style.display = "block";
+    }
+
+    // Handle Sign Up Form Submission
+    document.getElementById("signUpForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const fullName = document.getElementById("fullName").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      // Add User to Temporary Database
+      users.push({
+        fullName,
+        email,
+        password,
+        role: "User",
       });
-    }
 
-    // إعدادات السيارة (اللاعب)
-    const car = {
-      x: worldWidth / 2,
-      y: worldHeight / 2,
-      width: 40,
-      height: 20,
-      angle: 0,     // زاوية الدوران (راديان)
-      speed: 0,
-      maxSpeed: 5,
-      acceleration: 0.2,
-      friction: 0.05,
-      turnSpeed: 0.04
-    };
-
-    // مدخلات لوحة المفاتيح
-    const keys = {
-      ArrowUp: false,
-      ArrowDown: false,
-      ArrowLeft: false,
-      ArrowRight: false
-    };
-
-    window.addEventListener("keydown", e => {
-      if (keys.hasOwnProperty(e.key)) {
-        keys[e.key] = true;
-      }
-    });
-    window.addEventListener("keyup", e => {
-      if (keys.hasOwnProperty(e.key)) {
-        keys[e.key] = false;
-      }
+      alert("Account created successfully!");
+      hideSignUp();
     });
 
-    // دالة رسم الشجرة
-    function drawTree(tree, offsetX, offsetY) {
-      // جذع الشجرة
-      ctx.fillStyle = "#8B4513";
-      ctx.fillRect(tree.x - 4 - offsetX, tree.y - 10 - offsetY, 8, 20);
-      // تاج الشجرة (دائرة)
-      ctx.beginPath();
-      ctx.arc(tree.x - offsetX, tree.y - 15 - offsetY, tree.size, 0, Math.PI * 2);
-      ctx.fillStyle = "#228B22";
-      ctx.fill();
-    }
+    // Handle Login Form Submission
+    document.getElementById("loginForm").addEventListener("submit", (event) => {
+      event.preventDefault();
 
-    // دالة رسم البيت
-    function drawHouse(house, offsetX, offsetY) {
-      // رسم الجسم الأساسي للبيت
-      ctx.fillStyle = "#C0C0C0";
-      ctx.fillRect(house.x - offsetX, house.y - offsetY, house.width, house.height);
-      // رسم السقف
-      ctx.beginPath();
-      ctx.moveTo(house.x - offsetX, house.y - offsetY);
-      ctx.lineTo(house.x + house.width/2 - offsetX, house.y - 30 - offsetY);
-      ctx.lineTo(house.x + house.width - offsetX, house.y - offsetY);
-      ctx.closePath();
-      ctx.fillStyle = "#8B0000";
-      ctx.fill();
-    }
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
 
-    // دالة رسم السيارة
-    function drawCar(offsetX, offsetY) {
-      ctx.save();
-      // انتقال لنقطة مركز السيارة بالنسبة للكاميرا
-      const centerX = car.x - offsetX;
-      const centerY = car.y - offsetY;
-      ctx.translate(centerX, centerY);
-      ctx.rotate(car.angle);
-      ctx.fillStyle = "#0000FF";
-      ctx.fillRect(-car.width/2, -car.height/2, car.width, car.height);
-      ctx.restore();
-    }
+      // Check if user exists in the database
+      const user = users.find(
+        (u) => u.email === username && u.password === password
+      );
 
-    // تحديث موقع السيارة وحركتها
-    function updateCar() {
-      // التسارع والتباطؤ
-      if (keys.ArrowUp) {
-        car.speed += car.acceleration;
-      } else if (keys.ArrowDown) {
-        car.speed -= car.acceleration;
-      } else {
-        // تطبيق الاحتكاك لتقليل السرعة تدريجياً
-        if (car.speed > 0) {
-          car.speed -= car.friction;
-          if (car.speed < 0) car.speed = 0;
-        } else if (car.speed < 0) {
-          car.speed += car.friction;
-          if (car.speed > 0) car.speed = 0;
+      if (user) {
+        alert("Login successful!");
+        if (user.role === "Admin") {
+          showAdminDashboard();
+        } else {
+          alert("You are logged in as a regular user.");
         }
+      } else {
+        alert("Invalid credentials!");
       }
-
-      // تحديد السرعة القصوى
-      if (car.speed > car.maxSpeed) car.speed = car.maxSpeed;
-      if (car.speed < -car.maxSpeed) car.speed = -car.maxSpeed;
-
-      // دوران السيارة
-      if (keys.ArrowLeft) {
-        car.angle -= car.turnSpeed * (car.speed !== 0 ? (car.speed/ car.maxSpeed) : 1);
-      }
-      if (keys.ArrowRight) {
-        car.angle += car.turnSpeed * (car.speed !== 0 ? (car.speed/ car.maxSpeed) : 1);
-      }
-
-      // تحديث موقع السيارة
-      car.x += Math.cos(car.angle) * car.speed;
-      car.y += Math.sin(car.angle) * car.speed;
-
-      // الحد من السيارة ضمن حدود العالم
-      if (car.x < 0) car.x = 0;
-      if (car.x > worldWidth) car.x = worldWidth;
-      if (car.y < 0) car.y = 0;
-      if (car.y > worldHeight) car.y = worldHeight;
-    }
-
-    // دالة الرسم الرئيسية (Game Loop)
-    function gameLoop() {
-      updateCar();
-
-      // حساب إزاحة الكاميرا حتى تبقي السيارة في منتصف الشاشة تقريباً
-      const cameraX = car.x - canvas.width / 2;
-      const cameraY = car.y - canvas.height / 2;
-
-      // مسح الكانفس
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // رسم خلفية العالم (يمكنك رسم شبكات أو مجال آخر هنا)
-      ctx.fillStyle = "#7ec850";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // رسم الأشجار
-      trees.forEach(tree => {
-        drawTree(tree, cameraX, cameraY);
-      });
-
-      // رسم البيوت
-      houses.forEach(house => {
-        drawHouse(house, cameraX, cameraY);
-      });
-
-      // رسم السيارة
-      drawCar(cameraX, cameraY);
-
-      requestAnimationFrame(gameLoop);
-    }
-
-    gameLoop();
-
-    // تحديث حجم الكانفس عند تغيير حجم النافذة
-    window.addEventListener("resize", function() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
     });
+
+    // Edit User Function
+    function editUser(index) {
+      const user = users[index];
+      alert(`Editing user: ${user.fullName}`);
+      // Add logic to edit user here
+    }
+
+    // Delete User Function
+    function deleteUser(index) {
+      users.splice(index, 1);
+      alert("User deleted successfully!");
+      showAdminDashboard();
+    }
   </script>
 </body>
 </html>
