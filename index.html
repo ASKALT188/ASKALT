@@ -1,147 +1,219 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <title>إدارة المهام</title>
+  <meta charset="UTF-8">
+  <title>لعبة سيارات - عالم مفتوح</title>
   <style>
+    /* تصميم الصفحة */
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f3f3f3;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
+      margin: 0;
+      overflow: hidden;
+      background-color: #333;
     }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .points {
-      text-align: center;
-      font-size: 20px;
-      margin-bottom: 15px;
-    }
-    #taskInput {
-      width: 70%;
-      padding: 10px;
-      font-size: 16px;
-    }
-    #addBtn {
-      padding: 10px 15px;
-      font-size: 16px;
-      background-color: #4caf50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      background: #fff;
-      padding: 10px;
-      margin: 10px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    li.done {
-      text-decoration: line-through;
-      color: gray;
-    }
-    .btns button {
-      margin-right: 5px;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    .btns .complete {
-      background-color: #2196f3;
-      color: white;
-    }
-    .btns .delete {
-      background-color: #f44336;
-      color: white;
+    canvas {
+      background-color: #7ec850; /* لون العشب */
+      display: block;
+      margin: 0 auto;
     }
   </style>
 </head>
 <body>
-
-  <h1>إدارة المهام</h1>
-  <div class="points">نقاطك: <span id="points">0</span></div>
-  
-  <input type="text" id="taskInput" placeholder="أدخل مهمة جديدة">
-  <button id="addBtn">أضف</button>
-
-  <ul id="taskList"></ul>
+  <canvas id="gameCanvas"></canvas>
 
   <script>
-    let taskList = document.getElementById("taskList");
-    let addBtn = document.getElementById("addBtn");
-    let taskInput = document.getElementById("taskInput");
-    let pointsDisplay = document.getElementById("points");
-    let points = 0;
+    // إعدادات الكانفس
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    function updatePoints(value) {
-      points += value;
-      if (points < 0) points = 0;
-      pointsDisplay.textContent = points;
+    // إعدادات العالم
+    const worldWidth = 2000;
+    const worldHeight = 2000;
+
+    // إعدادات الكائنات في العالم
+    const trees = [];
+    const houses = [];
+    const numTrees = 50;
+    const numHouses = 20;
+
+    // دالة عشوائية لموقع الكائنات
+    function randomRange(min, max) {
+      return Math.random() * (max - min) + min;
     }
 
-    function addTask() {
-      let taskText = taskInput.value.trim();
-      if (taskText === "") return;
-
-      let li = document.createElement("li");
-
-      let span = document.createElement("span");
-      span.textContent = taskText;
-
-      let btns = document.createElement("div");
-      btns.className = "btns";
-
-      let completeBtn = document.createElement("button");
-      completeBtn.className = "complete";
-      completeBtn.textContent = "تم";
-      completeBtn.onclick = function () {
-        li.classList.toggle("done");
-        if (li.classList.contains("done")) {
-          updatePoints(10); // نقاط عند إكمال المهمة
-        } else {
-          updatePoints(-10); // خصم النقاط إذا ألغى الإكمال
-        }
-      };
-
-      let deleteBtn = document.createElement("button");
-      deleteBtn.className = "delete";
-      deleteBtn.textContent = "حذف";
-      deleteBtn.onclick = function () {
-        if (li.classList.contains("done")) updatePoints(-10);
-        taskList.removeChild(li);
-      };
-
-      btns.appendChild(completeBtn);
-      btns.appendChild(deleteBtn);
-
-      li.appendChild(span);
-      li.appendChild(btns);
-      taskList.appendChild(li);
-
-      taskInput.value = "";
-      updatePoints(5); // نقاط عند إضافة مهمة
+    // توليد الأشجار بمواقع عشوائية
+    for (let i = 0; i < numTrees; i++) {
+      trees.push({
+        x: randomRange(50, worldWidth - 50),
+        y: randomRange(50, worldHeight - 50),
+        size: randomRange(20, 30)
+      });
     }
 
-    addBtn.addEventListener("click", addTask);
+    // توليد البيوت بمواقع عشوائية
+    for (let i = 0; i < numHouses; i++) {
+      houses.push({
+        x: randomRange(100, worldWidth - 150),
+        y: randomRange(100, worldHeight - 150),
+        width: 80,
+        height: 60,
+        color: "#" + Math.floor(randomRange(0x444444, 0xeeeeee)).toString(16)
+      });
+    }
 
-    taskInput.addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        addTask();
+    // إعدادات السيارة (اللاعب)
+    const car = {
+      x: worldWidth / 2,
+      y: worldHeight / 2,
+      width: 40,
+      height: 20,
+      angle: 0,     // زاوية الدوران (راديان)
+      speed: 0,
+      maxSpeed: 5,
+      acceleration: 0.2,
+      friction: 0.05,
+      turnSpeed: 0.04
+    };
+
+    // مدخلات لوحة المفاتيح
+    const keys = {
+      ArrowUp: false,
+      ArrowDown: false,
+      ArrowLeft: false,
+      ArrowRight: false
+    };
+
+    window.addEventListener("keydown", e => {
+      if (keys.hasOwnProperty(e.key)) {
+        keys[e.key] = true;
       }
     });
-  </script>
+    window.addEventListener("keyup", e => {
+      if (keys.hasOwnProperty(e.key)) {
+        keys[e.key] = false;
+      }
+    });
 
+    // دالة رسم الشجرة
+    function drawTree(tree, offsetX, offsetY) {
+      // جذع الشجرة
+      ctx.fillStyle = "#8B4513";
+      ctx.fillRect(tree.x - 4 - offsetX, tree.y - 10 - offsetY, 8, 20);
+      // تاج الشجرة (دائرة)
+      ctx.beginPath();
+      ctx.arc(tree.x - offsetX, tree.y - 15 - offsetY, tree.size, 0, Math.PI * 2);
+      ctx.fillStyle = "#228B22";
+      ctx.fill();
+    }
+
+    // دالة رسم البيت
+    function drawHouse(house, offsetX, offsetY) {
+      // رسم الجسم الأساسي للبيت
+      ctx.fillStyle = "#C0C0C0";
+      ctx.fillRect(house.x - offsetX, house.y - offsetY, house.width, house.height);
+      // رسم السقف
+      ctx.beginPath();
+      ctx.moveTo(house.x - offsetX, house.y - offsetY);
+      ctx.lineTo(house.x + house.width/2 - offsetX, house.y - 30 - offsetY);
+      ctx.lineTo(house.x + house.width - offsetX, house.y - offsetY);
+      ctx.closePath();
+      ctx.fillStyle = "#8B0000";
+      ctx.fill();
+    }
+
+    // دالة رسم السيارة
+    function drawCar(offsetX, offsetY) {
+      ctx.save();
+      // انتقال لنقطة مركز السيارة بالنسبة للكاميرا
+      const centerX = car.x - offsetX;
+      const centerY = car.y - offsetY;
+      ctx.translate(centerX, centerY);
+      ctx.rotate(car.angle);
+      ctx.fillStyle = "#0000FF";
+      ctx.fillRect(-car.width/2, -car.height/2, car.width, car.height);
+      ctx.restore();
+    }
+
+    // تحديث موقع السيارة وحركتها
+    function updateCar() {
+      // التسارع والتباطؤ
+      if (keys.ArrowUp) {
+        car.speed += car.acceleration;
+      } else if (keys.ArrowDown) {
+        car.speed -= car.acceleration;
+      } else {
+        // تطبيق الاحتكاك لتقليل السرعة تدريجياً
+        if (car.speed > 0) {
+          car.speed -= car.friction;
+          if (car.speed < 0) car.speed = 0;
+        } else if (car.speed < 0) {
+          car.speed += car.friction;
+          if (car.speed > 0) car.speed = 0;
+        }
+      }
+
+      // تحديد السرعة القصوى
+      if (car.speed > car.maxSpeed) car.speed = car.maxSpeed;
+      if (car.speed < -car.maxSpeed) car.speed = -car.maxSpeed;
+
+      // دوران السيارة
+      if (keys.ArrowLeft) {
+        car.angle -= car.turnSpeed * (car.speed !== 0 ? (car.speed/ car.maxSpeed) : 1);
+      }
+      if (keys.ArrowRight) {
+        car.angle += car.turnSpeed * (car.speed !== 0 ? (car.speed/ car.maxSpeed) : 1);
+      }
+
+      // تحديث موقع السيارة
+      car.x += Math.cos(car.angle) * car.speed;
+      car.y += Math.sin(car.angle) * car.speed;
+
+      // الحد من السيارة ضمن حدود العالم
+      if (car.x < 0) car.x = 0;
+      if (car.x > worldWidth) car.x = worldWidth;
+      if (car.y < 0) car.y = 0;
+      if (car.y > worldHeight) car.y = worldHeight;
+    }
+
+    // دالة الرسم الرئيسية (Game Loop)
+    function gameLoop() {
+      updateCar();
+
+      // حساب إزاحة الكاميرا حتى تبقي السيارة في منتصف الشاشة تقريباً
+      const cameraX = car.x - canvas.width / 2;
+      const cameraY = car.y - canvas.height / 2;
+
+      // مسح الكانفس
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // رسم خلفية العالم (يمكنك رسم شبكات أو مجال آخر هنا)
+      ctx.fillStyle = "#7ec850";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // رسم الأشجار
+      trees.forEach(tree => {
+        drawTree(tree, cameraX, cameraY);
+      });
+
+      // رسم البيوت
+      houses.forEach(house => {
+        drawHouse(house, cameraX, cameraY);
+      });
+
+      // رسم السيارة
+      drawCar(cameraX, cameraY);
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+
+    // تحديث حجم الكانفس عند تغيير حجم النافذة
+    window.addEventListener("resize", function() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
 </body>
 </html>
