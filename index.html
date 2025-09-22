@@ -1617,6 +1617,18 @@
                             <button class="btn add-to-cart" data-id="9" data-name="تطبيق جوال" data-price="500">أضف إلى السلة</button>
                         </div>
                     </div>
+                            <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://cdn.salla.sa/jOyjy/WAQoS6s6BExz5PUvMVnzxqVIkeO9Jq6BI5sZwjr8.jpg" alt="تطبيق جوال">
+                        </div>
+                        <div class="product-info">
+                            <h4 class="product-name">كانفا برو مدى الحياة</h4>
+                            <p class="product-desc">كانفا مدى الحياة برو</p>
+                            <div class="product-price">
+                                <span class="price">10 ر.س</span>
+                                <span class="old-price">300 ر.س</span>
+                            </div>
+                            <button class="btn add-to-cart" data-id="10" data-name="تطبيق جوال" data-price="10">أضف إلى السلة</button>
                 </div>
             </div>
         </div>
@@ -1717,7 +1729,7 @@
                         </div>
                         <div class="contact-text">
                             <h3>الهاتف</h3>
-                            <p>0563713340</p>
+                            <p>0541108594</p>
                         </div>
                     </div>
                     <div class="contact-item">
@@ -1726,7 +1738,7 @@
                         </div>
                         <div class="contact-text">
                             <h3>الواتساب</h3>
-                            <p>0563713340</p>
+                            <p>0541108594</p>
                         </div>
                     </div>
                     <div class="contact-item">
@@ -1822,7 +1834,7 @@
                 <a href="#"><i class="fab fa-twitter"></i></a>
                 <a href="#"><i class="fab fa-instagram"></i></a>
                 <a href="#"><i class="fab fa-snapchat"></i></a>
-                <a href="https://wa.me/966563713340" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://wa.me/966541108594" target="_blank"><i class="fab fa-whatsapp"></i></a>
             </div>
             <p class="copyright">جميع الحقوق محفوظة &copy; 2025</p>
         </div>
@@ -1893,7 +1905,16 @@ const products = [
         description: "هو مصطلح يُستخدم لوصف نسخ غير رسمية أو معدّلة من نماذج GPT، والتي يُقال إنها قادرة على توليد محتوى غير مقيد أو غير آمن، وغالبًا خارج إرشادات النماذج الرسمية الخاصة بـ OpenAI.",
         price: 20,
         image: "https://images.unsplash.com/photo-1607799279861-4dd421887fb3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+    },
+
+    {
+        id: 10,
+        name: "كانفا برو مدى الحياة",
+        description: "كانفا مدى الحياة برو",
+        price: 10,
+        image: "https://cdn.salla.sa/jOyjy/WAQoS6s6BExz5PUvMVnzxqVIkeO9Jq6BI5sZwjr8.jpg"
     }
+    
 ];
 
 // عناصر DOM
@@ -1916,8 +1937,8 @@ whatsappNotification.innerHTML = `
     <span class="close-notification" id="closeNotification">&times;</span>
     <h3><i class="fab fa-whatsapp"></i> تواصل معنا على الواتساب</h3>
     <p>لإكمال عملية الشراء، يرجى التواصل معنا على الرقم التالي:</p>
-    <div class="whatsapp-number">966563713340</div>
-    <a href="https://wa.me/966563713340" target="_blank" class="btn btn-whatsapp">فتح المحادثة على الواتساب</a>
+    <div class="whatsapp-number">966541108594</div>
+    <a href="https://wa.me/966541108594" target="_blank" class="btn btn-whatsapp">فتح المحادثة على الواتساب</a>
 `;
 document.body.appendChild(whatsappNotification);
 const closeNotification = document.getElementById('closeNotification');
@@ -2055,7 +2076,7 @@ function submitOrder(event) {
     whatsappMessage += `%0Aالمجموع: ${cart.reduce((total, item) => total + (item.price * item.quantity), 0)} ر.س`;
     
     // فتح رابط الواتساب
-    window.open(`https://wa.me/966563713340?text=${whatsappMessage}`, '_blank');
+    window.open(`https://wa.me/966541108594?text=${whatsappMessage}`, '_blank');
     
     // إظهار رسالة النجاح
     showNotification('تم فتح الواتساب لإكمال الطلب!');
