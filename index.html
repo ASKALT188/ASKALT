@@ -13,29 +13,22 @@
             box-sizing: border-box;
         }
 
-        /* ===== الجسم (الخلفية الداكنة) ===== */
+        /* ===== الجسم ===== */
         body {
             font-family: 'Tajawal', sans-serif;
-            background-color: #1a1a1a; /* الخلفية الداكنة */
-            color: #2c3e50;
+            background-color: #f0f2f5;
+            color: #1a1a2e;
             line-height: 1.8;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 40px 20px;
         }
 
-        /* ===== الحاوية الرئيسية (البطاقة البيضاء) ===== */
+        /* ===== الحاوية الرئيسية (كامل الصفحة) ===== */
         .main-wrapper {
             width: 100%;
-            max-width: 850px;
-            background-color: #ffffff; /* البطاقة البيضاء */
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            min-height: 100vh;
+            background-color: #ffffff;
             overflow: hidden;
             position: relative;
-            margin: 0 auto;
         }
 
         /* ===== شريط التنقل العلوي ===== */
@@ -43,9 +36,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 30px;
-            background-color: #ffffff;
-            border-bottom: 1px solid #ecf0f1;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .brand {
@@ -55,59 +50,80 @@
         }
 
         .brand-logo {
-            background-color: #e67e22; /* البرتقالي */
+            background-color: #e94560;
             color: #ffffff;
-            padding: 6px 14px;
+            padding: 7px 16px;
             border-radius: 6px;
             font-weight: 800;
             font-size: 14px;
+            letter-spacing: 0.5px;
         }
 
         .brand-name {
             font-weight: 700;
             font-size: 18px;
-            color: #2c3e50;
+            color: #ffffff;
         }
 
         .nav-links {
             display: flex;
-            gap: 25px;
+            gap: 30px;
         }
 
         .nav-links a {
             text-decoration: none;
-            color: #7f8c8d;
+            color: #b8b8d4;
             font-weight: 500;
             font-size: 15px;
             transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background-color: #e94560;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
         }
 
         .nav-links a:hover, .nav-links a.active {
-            color: #e67e22;
+            color: #e94560;
         }
 
         /* ===== رأس المقال ===== */
         .article-header {
-            padding: 40px 30px 20px;
+            padding: 50px 40px 25px;
             text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         .article-category {
             display: inline-block;
-            background-color: #fef5e7;
-            color: #e67e22;
-            padding: 4px 14px;
-            border-radius: 20px;
+            background-color: #fce4ec;
+            color: #e94560;
+            padding: 6px 18px;
+            border-radius: 25px;
             font-size: 13px;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            letter-spacing: 0.3px;
         }
 
         .article-title {
-            font-size: 32px;
+            font-size: 38px;
             font-weight: 800;
-            color: #2c3e50;
-            margin-bottom: 20px;
+            color: #1a1a2e;
+            margin-bottom: 22px;
             line-height: 1.4;
         }
 
@@ -115,16 +131,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 25px;
+            gap: 30px;
             font-size: 14px;
-            color: #7f8c8d;
+            color: #6c757d;
             flex-wrap: wrap;
         }
 
         .article-meta span {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+        }
+
+        .article-meta svg {
+            fill: #e94560;
         }
 
         /* ===== شريط الأدوات ===== */
@@ -133,19 +153,21 @@
             justify-content: center;
             align-items: center;
             gap: 15px;
-            padding: 20px 0;
-            border-top: 1px solid #ecf0f1;
-            border-bottom: 1px solid #ecf0f1;
-            margin: 20px 30px;
+            padding: 25px 40px;
+            border-top: 1px solid #e9ecef;
+            border-bottom: 1px solid #e9ecef;
+            max-width: 900px;
+            margin: 25px auto;
+            flex-wrap: wrap;
         }
 
         .toolbar-btn {
             background-color: #f8f9fa;
-            border: 1px solid #ecf0f1;
-            padding: 8px 20px;
-            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            padding: 10px 22px;
+            border-radius: 8px;
             font-size: 14px;
-            color: #2c3e50;
+            color: #1a1a2e;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -155,9 +177,11 @@
         }
 
         .toolbar-btn:hover {
-            background-color: #e67e22;
+            background-color: #e94560;
             color: #ffffff;
-            border-color: #e67e22;
+            border-color: #e94560;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.3);
         }
 
         .toolbar-btn svg {
@@ -166,43 +190,58 @@
             fill: currentColor;
         }
 
-        /* ===== صورة المقال ===== */
+        /* ===== صورة المقال الرئيسية ===== */
         .article-image-wrapper {
-            padding: 0 30px;
-            margin-bottom: 30px;
+            max-width: 900px;
+            margin: 0 auto 35px;
+            padding: 0 40px;
             text-align: center;
         }
 
         .article-image {
             width: 100%;
-            max-width: 500px;
+            max-width: 100%;
             height: auto;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgb(255, 254, 254);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             display: block;
             margin: 0 auto;
         }
 
         /* ===== محتوى المقال ===== */
         .article-content {
-            padding: 0 30px 40px;
-            font-size: 17px;
-            color: #ffffff;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 40px 50px;
+            font-size: 18px;
+            color: #2c3e50;
             text-align: justify;
+            line-height: 2;
         }
 
         .article-content p {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         .article-content p:first-of-type::first-letter {
-            font-size: 50px;
+            font-size: 55px;
             font-weight: 800;
-            color: #e67e22;
+            color: #e94560;
             float: right;
-            margin-left: 12px;
+            margin-left: 14px;
             line-height: 1;
-            margin-top: 5px;
+            margin-top: 6px;
+        }
+
+        /* ===== صورة داخل المقال ===== */
+        .article-content .article-inner-image {
+            width: 100%;
+            max-width: 700px;
+            height: auto;
+            border-radius: 12px;
+            margin: 30px auto;
+            display: block;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
 
         /* ===== الأزرار العائمة الجانبية ===== */
@@ -218,15 +257,15 @@
         }
 
         .action-btn {
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             background-color: #ffffff;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            color: #7f8c8d;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            color: #6c757d;
             text-decoration: none;
             transition: all 0.3s;
             border: none;
@@ -234,62 +273,73 @@
         }
 
         .action-btn:hover {
-            background-color: #e67e22;
+            background-color: #e94560;
             color: #ffffff;
-            transform: scale(1.1);
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(233, 69, 96, 0.4);
         }
 
         .action-btn svg {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             fill: currentColor;
         }
 
         /* ===== الإعلان الجانبي ===== */
         .ad-sidebar {
             position: fixed;
-            top: 150px;
+            top: 180px;
             left: 30px;
-            width: 220px;
-            background-color: #2a2a2a;
+            width: 230px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
+            padding: 25px;
+            border-radius: 12px;
             font-size: 13px;
-            border: 1px solid #444444;
+            border: 1px solid #2a2a4a;
             z-index: 99;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .ad-sidebar h4 {
-            color: #e67e22;
-            font-size: 15px;
-            margin-bottom: 12px;
-            border-bottom: 1px solid #444444;
-            padding-bottom: 8px;
+            color: #e94560;
+            font-size: 16px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #2a2a4a;
+            padding-bottom: 10px;
         }
 
         .ad-sidebar p {
-            margin-bottom: 10px;
-            line-height: 1.6;
-            color: #cccccc;
+            margin-bottom: 12px;
+            line-height: 1.7;
+            color: #b8b8d4;
         }
 
         .ad-sidebar .ad-link {
-            color: #e67e22;
+            color: #e94560;
             font-weight: bold;
             text-decoration: none;
             display: inline-block;
             margin-top: 5px;
+            transition: color 0.3s;
+        }
+
+        .ad-sidebar .ad-link:hover {
+            color: #ff6b81;
         }
 
         /* ===== التذييل ===== */
         .footer {
-            background-color: #f8f9fa;
-            padding: 20px 30px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 30px 40px;
             text-align: center;
-            font-size: 13px;
-            color: #7f8c8d;
-            border-top: 1px solid #ecf0f1;
+            font-size: 14px;
+            color: #b8b8d4;
+        }
+
+        .footer a {
+            color: #e94560;
+            text-decoration: none;
         }
 
         /* ===== التجاوب ===== */
@@ -300,15 +350,15 @@
         }
 
         @media (max-width: 768px) {
-            body { padding: 10px; }
-            .navbar { flex-direction: column; gap: 15px; padding: 15px; }
-            .nav-links { width: 100%; justify-content: center; font-size: 14px; }
-            .article-header { padding: 25px 15px 15px; }
-            .article-title { font-size: 24px; }
-            .article-meta { flex-direction: column; gap: 10px; }
-            .toolbar { margin: 15px; flex-wrap: wrap; }
-            .article-image-wrapper, .article-content { padding: 0 15px; }
-            .article-content { font-size: 15px; padding-bottom: 30px; }
+            .navbar { flex-direction: column; gap: 15px; padding: 15px 20px; }
+            .nav-links { width: 100%; justify-content: center; font-size: 14px; gap: 20px; }
+            .article-header { padding: 30px 20px 20px; }
+            .article-title { font-size: 26px; }
+            .article-meta { flex-direction: column; gap: 12px; }
+            .toolbar { margin: 20px; padding: 20px; }
+            .article-image-wrapper, .article-content { padding: 0 20px; }
+            .article-content { font-size: 16px; padding-bottom: 30px; }
+            .article-content p:first-of-type::first-letter { font-size: 40px; }
         }
     </style>
 </head>
@@ -354,10 +404,8 @@
 
         <!-- رأس المقال -->
         <header class="article-header">
-            <span class="article-category">حوثي بياع يمني </span>
-            الحوثي البياع
-            <h1 class="article-title">الحوثي البياع في منضمة اليمنيه</h1>
-            <!-- ================================== -->
+            <span class="article-category">حوثي بياع يمني</span>
+            <h1 class="article-title">الحوثي البياع في منظمة اليمنيه</h1>
             <div class="article-meta">
                 <span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
@@ -390,23 +438,23 @@
             </button>
         </div>
 
-        <!-- صورة المقال -->
+        <!-- صورة المقال الرئيسية -->
         <div class="article-image-wrapper">
-            <!-- ====== ضع رابط الصورة هنا ====== -->
             <img src="https://i.ibb.co/XrM23jrZ/image.png" alt="صورة المقال" class="article-image">
         </div>
 
         <!-- محتوى المقال -->
         <article class="article-content">
-            <!-- ====== اكتب نص المقال هنا ====== -->
             <p>اكتب الفقرة الأولى هنا. هذا النص مجرد مساحة فارغة لتكتب فيها ما تريد. يمكنك حذف هذا النص وكتابة مقالك الخاص.</p>
-            
+
+            <!-- صورة داخل المقال -->
+            <img src="https://i.ibb.co/XrM23jrZ/image.png" alt="صورة داخل المقال" class="article-inner-image">
+
             <p>اكتب الفقرة الثانية هنا. استمر في الكتابة حتى ينتهي مقالك. التصميم سيتكيف تلقائياً مع طول النص.</p>
             
             <p>اكتب الفقرة الثالثة هنا. يمكنك إضافة المزيد من الفقرات حسب الحاجة.</p>
             
             <p>اكتب الفقرة الأخيرة هنا. شكراً لاستخدامك هذا القالب.</p>
-            <!-- ================================== -->
         </article>
 
         <!-- التذييل -->
